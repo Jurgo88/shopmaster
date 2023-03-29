@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import FirebaseTestView from '../views/FirebaseTestView.vue'
+import DashboardView from '../views/DashboardView.vue'
 
 const routes = [
   {
@@ -20,6 +21,11 @@ const routes = [
     path: '/firebase-test',
     name: 'FirebaseTest',
     component: FirebaseTestView
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: DashboardView
   }
 ]
 
