@@ -13,14 +13,20 @@
           <label for="cena">Cena:</label>
           <input type="number" step="0.01" id="cena" v-model.number="editPolozkaData.cena" required>
         </div>
-        <div>
+        <!-- <div>
           <label for="kategoria">Kategoria:</label>
           <input type="text" id="kategoria" v-model="editPolozkaData.kategoria" required>
-        </div>
+        </div> -->
+        <SelectBox id="kategoria" v-model="selectedCategory"  :name="'kategoria'" :label="'Kategoria: '" :options="categoryOptions" />
+        <!-- <input type="text" id="kategoria" v-model="editPolozkaData.kategoria" > -->
         <!-- <div>
           <label for="datum">Dátum:</label>
            <input type="date" id="datum" v-model="editPolozkaData.datum" required>
         </div> -->
+        <!-- <p>Vybraná kategória: {{ this.selected }}</p> -->
+        <div>
+   
+  </div>
         <div>
           <button type="submit">{{ editMode ? 'Uložiť zmeny' : 'Pridať položku' }}</button>
           <button type="button" @click="closePolozkaModal">Zrušiť</button>
@@ -65,6 +71,8 @@
   }
   </style>
   <script>
+  import SelectBox from './MySelectbox.vue';
+  import { options } from '../categoryOptions.js';
   export default {
     props: {
       editPolozkaData: {
@@ -72,14 +80,31 @@
         required: true
       }
     },
+    value: {
+      type: String,
+      default: '',
+    },
+    selectedCategory: { // pridajte tento riadok
+      type: String, // alebo iný typ, ktorý očakávate
+      required: false
+    },
+    components: {
+      SelectBox,
+    },
     data() {
       return {
-        editMode: !!Object.keys(this.editPolozkaData).length
+        editMode: !!Object.keys(this.editPolozkaData).length,
+        categoryOptions: options,   
+        selectedCategory: '',   
+        //selectedCategory: this.selectedCategory, // pridajte tento riadok 
       }
     },
+    
     methods: {
       submitPolozka() {
-        this.$emit('submitPolozka');
+        // console.log(this.editPolozkaData)
+        console.log("Seleksn " +this.selectedCategory)
+        this.$emit('submitPolozka', this.selectedCategory);
       },
       closePolozkaModal() {
         this.$emit('close');
