@@ -1,40 +1,52 @@
 <template>
-    <div>
-      <label :for="name">{{ label }}</label>
-      <select :id="name" :name="name" v-model="selected" :required="isRequired">
-        <option disabled value="">{{ placeholder }}</option>
-        <option v-for="option in options" :key="option.value" :value="option.value">{{ option.label }}</option>
-      </select>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'SelectBox',
-    props: {
-      name: { type: String, required: true },
-      label: { type: String, required: true },
-      placeholder: { type: String, default: 'Vyberte možnosť' },
-      options: { type: Array, required: true },
-      value: { type: String },
-      isRequired: { type: Boolean, default: false },
+  <div class="selectbox-container">
+    <label :for="name">{{ label }}</label>
+    <select :id="name" :name="name" v-model="selectedValue" @change="updateValue($event)">
+      <option disabled value="">Zadaj kategóriu</option>
+      <option v-for="(option, index) in options" :key="index" :value="option.value">{{ option.label }}</option>
+    </select>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    name: {
+      type: String,
+      required: true,
     },
-    data() {
-      return {
-        selected: this.value,
-      };
+    label: {
+      type: String,
+      required: true,
     },
-    computed: {
-      mappedValue() {
-        return this.selected;
-      },
+    options: {
+      type: Array,
+      required: true,
     },
-    watch: {
-      selected(value) {
-        console.log("Selected: " + value);
-        this.$emit('input', value);
-        this.$emit('selected', value); 
-      },
+    modelValue: {
+      type: String,
+      required: true,
     },
-  };
-  </script>
+  },
+  computed: {
+    defaultOption() {
+      return this.options.find(option => option.value === this.modelValue);
+    },
+  },
+  data() {
+    return {
+      selectedValue: this.defaultOption ? this.defaultOption.value : '',
+    };
+  },
+  methods: {
+    updateValue(event) {
+      if (event.target && event.target.value) {
+        this.selectedValue = event.target.value;
+      } else {
+        this.selectedValue = this.defaultOption ? this.defaultOption.value : '';
+      }
+      this.$emit("update:modelValue", this.selectedValue);
+    },
+  },
+};
+</script>

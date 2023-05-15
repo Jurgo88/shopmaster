@@ -13,20 +13,9 @@
           <label for="cena">Cena:</label>
           <input type="number" step="0.01" id="cena" v-model.number="editPolozkaData.cena" required>
         </div>
-        <!-- <div>
-          <label for="kategoria">Kategoria:</label>
-          <input type="text" id="kategoria" v-model="editPolozkaData.kategoria" required>
-        </div> -->
-        <SelectBox id="kategoria" v-model="selectedCategory"  :name="'kategoria'" :label="'Kategoria: '" :options="categoryOptions" />
-        <!-- <input type="text" id="kategoria" v-model="editPolozkaData.kategoria" > -->
-        <!-- <div>
-          <label for="datum">Dátum:</label>
-           <input type="date" id="datum" v-model="editPolozkaData.datum" required>
-        </div> -->
-        <!-- <p>Vybraná kategória: {{ this.selected }}</p> -->
-        <div>
-   
-  </div>
+        
+        <SelectBox id="selectboxKategoria" v-model="selectedCategory"  :name="'selectboxKategoria'" :label="'Kategoria: '" :options="categoryOptions" />
+        
         <div>
           <button type="submit">{{ editMode ? 'Uložiť zmeny' : 'Pridať položku' }}</button>
           <button type="button" @click="closePolozkaModal">Zrušiť</button>
@@ -70,45 +59,74 @@
     cursor: pointer;
   }
   </style>
-  <script>
-  import SelectBox from './MySelectbox.vue';
-  import { options } from '../categoryOptions.js';
-  export default {
-    props: {
-      editPolozkaData: {
-        type: Object,
-        required: true
-      }
-    },
-    value: {
-      type: String,
-      default: '',
-    },
-    selectedCategory: { // pridajte tento riadok
-      type: String, // alebo iný typ, ktorý očakávate
-      required: false
-    },
-    components: {
-      SelectBox,
-    },
-    data() {
-      return {
-        editMode: !!Object.keys(this.editPolozkaData).length,
-        categoryOptions: options,   
-        selectedCategory: '',   
-        //selectedCategory: this.selectedCategory, // pridajte tento riadok 
-      }
-    },
-    
-    methods: {
-      submitPolozka() {
-        // console.log(this.editPolozkaData)
-        console.log("Seleksn " +this.selectedCategory)
-        this.$emit('submitPolozka', this.selectedCategory);
-      },
-      closePolozkaModal() {
-        this.$emit('close');
-      }
-    }
-  };
-  </script>
+ <script>
+ // Importing Vue features
+ import { ref, watch, computed } from 'vue';
+ import SelectBox from './MySelectbox.vue';
+ import { options } from '../categoryOptions.js';
+ 
+ // Exporting component
+ export default {
+   // Declaring component props
+   props: {
+     editPolozkaData: {
+       type: Object,
+       required: true
+     },
+     value: {
+       type: String,
+       default: '',
+     }
+   },
+   // Registering component dependencies
+   components: {
+     SelectBox,
+   },
+   // Defining component logic with setup function
+   setup(props, { emit }) {
+     // Initializing variables with reactive refs
+     const editMode = !!Object.keys(props.editPolozkaData).length;
+     const categoryOptions = options;
+     const selectedCategory = ref(props.value);
+ 
+     // Setting up watchers for reactive variables
+     watch(selectedCategory, (newVal, oldVal) => {
+       console.log('selectedCategory changed', oldVal, '->', newVal);
+     });
+ 
+     watch(() => props.editPolozkaData, (newVal, oldVal) => {
+       console.log('editPolozkaData changed', oldVal, '->', newVal);
+     }, { deep: true });
+ 
+     // Setting up computed property to sync prop value with local state
+     const localselected = computed({
+       get: () => selectedCategory.value,
+       set: (value) => {
+         emit('update:value', value);
+       }
+     });
+ 
+     // Defining functions to handle component events
+     const submitPolozka = () => {
+       console.log(props.editPolozkaData);
+       console.log("Selected " + selectedCategory.value);
+       props.editPolozkaData.kategoria = selectedCategory.value;
+       emit('submitPolozka');
+     };
+ 
+     const closePolozkaModal = () => {
+       emit('close');
+     };
+ 
+     // Returning values to be used in component template
+     return {
+       editMode,
+       categoryOptions,
+       selectedCategory,
+       localselected,
+       submitPolozka,
+       closePolozkaModal,
+     };
+   }
+ };
+</script>
