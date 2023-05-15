@@ -1,10 +1,13 @@
 <template>
     <div>
-      <NakupyTable :nakupy="nakupy" @editNakup="editNakup" @deleteNakup="deleteNakup"  @selectNakup="selectNakup" />
+      <DashboardInfobar :sumaLastMonth="sumaLastMonth" />
       <button @click="showAddNakupModal">Pridať nákup</button>
+      <NakupyTable :nakupy="nakupy" @editNakup="editNakup" @deleteNakup="deleteNakup"  @selectNakup="selectNakup" />
+      
       <NakupModal v-if="showNakupModal" @close="closeNakupModal" :editNakupData="editNakupData" @submitNakup="submitNakup" />
-      <PolozkyTable v-if="showPolozky" :polozky="filteredNakupy" @editPolozka="editPolozka" @deletePolozka="deletePolozka" />
       <button v-if="showAddPolozkaButton" @click="showAddPolozkaModal">Pridať položku</button>
+      <PolozkyTable v-if="showPolozky" :polozky="filteredNakupy" @editPolozka="editPolozka" @deletePolozka="deletePolozka" />
+      
       <PolozkaModal v-if="showPolozkaModal" @close="closePolozkaModal" :editPolozkaData="editPolozkaData" @submitPolozka="submitPolozka" />
     </div>
   </template>
@@ -15,6 +18,7 @@
   import NakupModal from './NakupModal.vue';
   import PolozkyTable from './PolozkyTable.vue';
   import PolozkaModal from './PolozkaModal.vue';
+  import DashboardInfobar from './DashboardInfobar.vue';
 
   const getMaxIdByItem = async (collection, item) => {
   const snapshot = await db.collection(collection).orderBy(item, 'desc').limit(1).get();
@@ -27,7 +31,8 @@
       NakupyTable,
       NakupModal,
       PolozkyTable,
-      PolozkaModal
+      PolozkaModal,
+      DashboardInfobar,
     },
     data() {
       return {
@@ -40,7 +45,8 @@
         editNakupData: {},
         editPolozkaData: {},
         filterIdNakupu: null,
-        selectedNakup: null
+        selectedNakup: null,
+        sumaLastMonth: 0,
       };
     },
     computed: {
@@ -147,6 +153,30 @@
                 console.error(error);
             }
         },
+        updateSumaLastMonth() {
+        // Príslušný kód pre výpočet sumy za posledný mesiac
+        // Napríklad:
+        const lastMonth = new Date();
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+        const sum = this.nakupy.reduce((total, nakup) => {
+          const nakupDate = new Date(nakup.datum);
+          if (nakupDate > lastMonth) {
+            return total + nakup.suma;
+          }
+          return total;
+        }, 0);
+        this.sumaLastMonth = sum;
+        console.log("Suma za posledny mesiac je : " + this.sumaLastMonth);
+      },
+    },
+    watch: {
+      nakupy: {
+        handler: function(newNakupy, oldNakupy) {
+          this.updateSumaLastMonth();
+        },
+        deep: true,
+      },
+      // Pridaj ďalšie watchery pre relevantné dáta, napr. filterIdNakupu, polozky, atď.
     },
     async mounted() {
       // fetch data from firebase and assign it to this.nakupy and this.polozky
@@ -159,6 +189,8 @@
     db.collection('nakupy').onSnapshot((snapshot) => {
       this.nakupy = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     });
+    //Update sum for last month
+    this.updateSumaLastMonth();
     }
   };
   </script>
