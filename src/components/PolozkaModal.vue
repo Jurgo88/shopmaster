@@ -14,7 +14,7 @@
           <input type="number" step="0.01" id="cena" v-model.number="editPolozkaData.cena" required>
         </div>
         
-        <SelectBox id="selectboxKategoria" v-model="selectedCategory"  :name="'selectboxKategoria'" :label="'Kategoria: '" :options="categoryOptions" />
+        <SelectBox id="selectboxKategoria" v-model="selectedCategory"  :name="'selectboxKategoria'" :label="'Kategoria: '" :modelValue="selectedCategory.value" :options="categoryOptions" />
         
         <div>
           <button type="submit">{{ editMode ? 'Uložiť zmeny' : 'Pridať položku' }}</button>
@@ -84,49 +84,54 @@
    },
    // Defining component logic with setup function
    setup(props, { emit }) {
-     // Initializing variables with reactive refs
-     const editMode = !!Object.keys(props.editPolozkaData).length;
-     const categoryOptions = options;
-     const selectedCategory = ref(props.value);
- 
-     // Setting up watchers for reactive variables
-     watch(selectedCategory, (newVal, oldVal) => {
-       console.log('selectedCategory changed', oldVal, '->', newVal);
-     });
- 
-     watch(() => props.editPolozkaData, (newVal, oldVal) => {
-       console.log('editPolozkaData changed', oldVal, '->', newVal);
-     }, { deep: true });
- 
-     // Setting up computed property to sync prop value with local state
-     const localselected = computed({
-       get: () => selectedCategory.value,
-       set: (value) => {
-         emit('update:value', value);
-       }
-     });
- 
-     // Defining functions to handle component events
-     const submitPolozka = () => {
-       console.log(props.editPolozkaData);
-       console.log("Selected " + selectedCategory.value);
-       props.editPolozkaData.kategoria = selectedCategory.value;
-       emit('submitPolozka');
-     };
- 
-     const closePolozkaModal = () => {
-       emit('close');
-     };
- 
-     // Returning values to be used in component template
-     return {
-       editMode,
-       categoryOptions,
-       selectedCategory,
-       localselected,
-       submitPolozka,
-       closePolozkaModal,
-     };
-   }
+  // Initializing variables with reactive refs
+  const editMode = !!Object.keys(props.editPolozkaData).length;
+  const categoryOptions = options;
+  const selectedCategory = ref(props.value || '');
+
+  // Set the selected category to the value from the database when the component loads
+  if (props.editPolozkaData.kategoria) {
+    selectedCategory.value = props.editPolozkaData.kategoria;
+  }
+
+  // Setting up watchers for reactive variables
+  watch(selectedCategory, (newVal, oldVal) => {
+    console.log('selectedCategory changed', oldVal, '->', newVal);
+  });
+
+  watch(() => props.editPolozkaData, (newVal, oldVal) => {
+    console.log('editPolozkaData changed', oldVal, '->', newVal);
+  }, { deep: true });
+
+  // Setting up computed property to sync prop value with local state
+  const localselected = computed({
+    get: () => selectedCategory.value,
+    set: (value) => {
+      emit('update:value', value);
+    }
+  });
+
+  // Defining functions to handle component events
+  const submitPolozka = () => {
+    console.log(props.editPolozkaData);
+    console.log("Selected " + selectedCategory.value);
+    props.editPolozkaData.kategoria = selectedCategory.value;
+    emit('submitPolozka');
+  };
+
+  const closePolozkaModal = () => {
+    emit('close');
+  };
+
+  // Returning values to be used in component template
+  return {
+    editMode,
+    categoryOptions,
+    selectedCategory,
+    localselected,
+    submitPolozka,
+    closePolozkaModal,
+  };
+}
  };
 </script>

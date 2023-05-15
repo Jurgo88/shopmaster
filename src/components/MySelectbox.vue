@@ -7,7 +7,6 @@
     </select>
   </div>
 </template>
-
 <script>
 export default {
   props: {
@@ -28,23 +27,20 @@ export default {
       required: true,
     },
   },
-  computed: {
-    defaultOption() {
-      return this.options.find(option => option.value === this.modelValue);
-    },
-  },
   data() {
     return {
-      selectedValue: this.defaultOption ? this.defaultOption.value : '',
+      selectedValue: '',
     };
+  },
+  mounted() {
+    console.log("mounted" + this.modelValue);
+    this.selectedValue = this.modelValue ? this.options.find(option => option.value === this.modelValue)?.value : '';
+    console.log("selected value pri mounted je " + this.selectedValue);
   },
   methods: {
     updateValue(event) {
-      if (event.target && event.target.value) {
-        this.selectedValue = event.target.value;
-      } else {
-        this.selectedValue = this.defaultOption ? this.defaultOption.value : '';
-      }
+      console.log("update value");
+      this.selectedValue = event.target && event.target.value ? event.target.value : '';
       this.$emit("update:modelValue", this.selectedValue);
     },
   },
