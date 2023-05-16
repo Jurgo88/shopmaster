@@ -1,6 +1,7 @@
 <template>
     <div>
       <DashboardInfobar :sumaLastMonth="sumaLastMonth" :sumaThisMonth="sumaThisMonth"  />
+      <SettingsInfobar />
       <button @click="showAddNakupModal">Pridať nákup</button>
       <NakupyTable :nakupy="nakupy" @editNakup="editNakup" @deleteNakup="deleteNakup"  @selectNakup="selectNakup" />
       
@@ -19,6 +20,7 @@
   import PolozkyTable from './PolozkyTable.vue';
   import PolozkaModal from './PolozkaModal.vue';
   import DashboardInfobar from './DashboardInfobar.vue';
+  import SettingsInfobar from './SettingsInfobar.vue';
 
   const getMaxIdByItem = async (collection, item) => {
   const snapshot = await db.collection(collection).orderBy(item, 'desc').limit(1).get();
@@ -33,6 +35,7 @@
       PolozkyTable,
       PolozkaModal,
       DashboardInfobar,
+      SettingsInfobar,
     },
     data() {
       return {
@@ -56,7 +59,6 @@
         if (this.filterIdNakupu) {
             //console.log("Filter id nakupu "+ filterIdNakupu);
             this.showPolozky = true;
-            console.log(this.showPolozky);
             return this.polozky.filter(polozka => polozka.idNakupu === this.filterIdNakupu);
         } else {
             return this.polozky;
@@ -86,6 +88,8 @@
           await db.collection('nakupy').add({ idNakupu: newNakupId, ...nakupData });
           // Add new item
           //await db.collection('nakupy').add(nakupData);
+          this.updateSumaLastMonth();
+          this.updateSumaThisMonth();
         }
         this.showNakupModal = false;
         this.editNakupData = {};
@@ -96,6 +100,8 @@
     editNakup(nakup) {
       this.editNakupData = { ...nakup };
       this.showNakupModal = true;
+      this.updateSumaLastMonth();
+      this.updateSumaThisMonth();
     },
     selectNakup(id){
         this.selectedNakup = this.nakupy.find(nakup => nakup.id === id);
@@ -106,6 +112,8 @@
     async deleteNakup(id) {
       try {
         await db.collection('nakupy').doc(id).delete();
+        this.updateSumaLastMonth();
+        this.updateSumaThisMonth();
       } catch (error) {
         console.error(error);
       }
@@ -188,6 +196,7 @@
       nakupy: {
         handler: function(newNakupy, oldNakupy) {
           this.updateSumaLastMonth();
+          this.updateSumaThisMonth();
         },
         deep: true,
       },
@@ -206,6 +215,7 @@
     });
     //Update sum for last month
     this.updateSumaLastMonth();
+    this.updateSumaThisMonth();
     }
   };
   </script>
