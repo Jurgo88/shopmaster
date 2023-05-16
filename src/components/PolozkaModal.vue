@@ -94,14 +94,8 @@
     selectedCategory.value = props.editPolozkaData.kategoria;
   }
 
-  // Setting up watchers for reactive variables
-  watch(selectedCategory, (newVal, oldVal) => {
-    console.log('selectedCategory changed', oldVal, '->', newVal);
-  });
-
-  watch(() => props.editPolozkaData, (newVal, oldVal) => {
-    console.log('editPolozkaData changed', oldVal, '->', newVal);
-  }, { deep: true });
+  // Setting up watchers for reactive variables USED TO BE
+  
 
   // Setting up computed property to sync prop value with local state
   const localselected = computed({
@@ -113,8 +107,6 @@
 
   // Defining functions to handle component events
   const submitPolozka = () => {
-    console.log(props.editPolozkaData);
-    console.log("Selected " + selectedCategory.value);
     props.editPolozkaData.kategoria = selectedCategory.value;
     emit('submitPolozka');
   };

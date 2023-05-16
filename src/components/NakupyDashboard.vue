@@ -1,6 +1,6 @@
 <template>
     <div>
-      <DashboardInfobar :sumaLastMonth="sumaLastMonth" />
+      <DashboardInfobar :sumaLastMonth="sumaLastMonth" :sumaThisMonth="sumaThisMonth"  />
       <button @click="showAddNakupModal">Pridať nákup</button>
       <NakupyTable :nakupy="nakupy" @editNakup="editNakup" @deleteNakup="deleteNakup"  @selectNakup="selectNakup" />
       
@@ -47,6 +47,7 @@
         filterIdNakupu: null,
         selectedNakup: null,
         sumaLastMonth: 0,
+        sumaThisMonth: 0,
       };
     },
     computed: {
@@ -141,19 +142,19 @@
                 } catch (error) {
                     console.error(error);
                 }
-            },
-            editPolozka(polozka) {
-                this.editPolozkaData = { ...polozka };
-                this.showPolozkaModal = true;
-            },
-                async deletePolozka(id) {
-                    try {
-                        await db.collection('polozky').doc(id).delete();
-                    } catch (error) {
-                console.error(error);
-            }
-        },
-        updateSumaLastMonth() {
+      },
+      editPolozka(polozka) {
+          this.editPolozkaData = { ...polozka };
+          this.showPolozkaModal = true;
+      },
+      async deletePolozka(id) {
+                try {
+                    await db.collection('polozky').doc(id).delete();
+                } catch (error) {
+            console.error(error);
+        }
+      },
+      updateSumaLastMonth() {
         // Príslušný kód pre výpočet sumy za posledný mesiac
         // Napríklad:
         const lastMonth = new Date();
@@ -167,6 +168,20 @@
         }, 0);
         this.sumaLastMonth = sum;
         console.log("Suma za posledny mesiac je : " + this.sumaLastMonth);
+      },
+      updateSumaThisMonth() {
+        const currentMonth = new Date().getMonth() + 1;
+        
+        const sum = this.nakupy.reduce((total, nakup) => {
+          const nakupMonth = new Date(nakup.datum).getMonth() + 1;
+          if (nakupMonth === currentMonth) {
+            return total + nakup.suma;
+          }
+          return total;
+        }, 0);
+
+        this.sumaThisMonth = sum;
+        console.log("Suma za aktuálny mesiac je: " + this.sumaThisMonth);
       },
     },
     watch: {

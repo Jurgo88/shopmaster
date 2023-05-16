@@ -33,13 +33,10 @@ export default {
     };
   },
   mounted() {
-    console.log("mounted" + this.modelValue);
     this.selectedValue = this.modelValue ? this.options.find(option => option.value === this.modelValue)?.value : '';
-    console.log("selected value pri mounted je " + this.selectedValue);
   },
   methods: {
     updateValue(event) {
-      console.log("update value");
       this.selectedValue = event.target && event.target.value ? event.target.value : '';
       this.$emit("update:modelValue", this.selectedValue);
     },
