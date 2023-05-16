@@ -1,15 +1,20 @@
 <template>
-    <div class="infobar">
-      <DashboardInfobarItem v-for="box in boxes" :key="box.id" :title="box.title" :content="box.content" />
+    <div>
+      <div class="infobar">
+        <DashboardInfobarItem v-for="box in boxes" :key="box.id" :title="box.title" :content="box.content" />
+      </div>
+      <SettingsInfobar ref="settingsInfobar" @checkbox-changed="handleCheckboxChanged" />
     </div>
   </template>
   
   <script>
   import DashboardInfobarItem from './DashboardInfobarItem.vue';
+  import SettingsInfobar from './SettingsInfobar.vue';
   
   export default {
     components: {
       DashboardInfobarItem,
+      SettingsInfobar,
     },
     props: {
       sumaLastMonth: {
@@ -49,6 +54,12 @@
       updateBoxContents() {
         this.boxes[0].content = `Suma za posledný mesiac: ${this.formatCurrency(this.sumaLastMonth)}`;
         this.boxes[1].content = `Suma za aktuálny mesiac: ${this.formatCurrency(this.sumaThisMonth)}`;
+      },
+      handleCheckboxChanged(checkboxName) {
+        if (checkboxName === 'lastMonth') {
+          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(1);
+          this.boxes[0].content = checkbox && checkbox.checked ? `Suma za posledný mesiac: ${this.formatCurrency(this.sumaLastMonth)}` : '';
+        }
       },
     },
   };

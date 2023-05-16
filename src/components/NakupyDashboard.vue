@@ -1,7 +1,7 @@
 <template>
     <div>
       <DashboardInfobar :sumaLastMonth="sumaLastMonth" :sumaThisMonth="sumaThisMonth"  />
-      <SettingsInfobar />
+      <!-- <SettingsInfobar /> -->
       <button @click="showAddNakupModal">Pridať nákup</button>
       <NakupyTable :nakupy="nakupy" @editNakup="editNakup" @deleteNakup="deleteNakup"  @selectNakup="selectNakup" />
       
@@ -20,7 +20,6 @@
   import PolozkyTable from './PolozkyTable.vue';
   import PolozkaModal from './PolozkaModal.vue';
   import DashboardInfobar from './DashboardInfobar.vue';
-  import SettingsInfobar from './SettingsInfobar.vue';
 
   const getMaxIdByItem = async (collection, item) => {
   const snapshot = await db.collection(collection).orderBy(item, 'desc').limit(1).get();
@@ -35,7 +34,6 @@
       PolozkyTable,
       PolozkaModal,
       DashboardInfobar,
-      SettingsInfobar,
     },
     data() {
       return {
