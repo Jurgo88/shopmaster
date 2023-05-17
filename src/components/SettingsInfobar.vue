@@ -25,7 +25,7 @@ export default {
       checkboxes: [
         { id: 1, label: 'Posledných 30 dní', name: 'lastMonth', checked: false },
         { id: 2, label: 'Aktuálny mesiac', name: 'thisMonth', checked: false },
-        { id: 3, label: 'Checkbox 3', name: '3', checked: false },
+        { id: 3, label: 'Obľúbená položka', name: 'favoritAll', checked: false },
         { id: 4, label: 'Checkbox 4', name: '4', checked: false },
         { id: 5, label: 'Checkbox 5', name: '5', checked: false },
         { id: 6, label: 'Checkbox 6', name: '6', checked: false },

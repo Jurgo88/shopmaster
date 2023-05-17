@@ -1,6 +1,6 @@
 <template>
     <div>
-      <DashboardInfobar :sumaLastMonth="sumaLastMonth" :sumaThisMonth="sumaThisMonth"  />
+      <DashboardInfobar :sumaLastMonth="sumaLastMonth" :sumaThisMonth="sumaThisMonth" :favoritAll="favoritAll" />
       <!-- <SettingsInfobar /> -->
       <button @click="showAddNakupModal">Pridať nákup</button>
       <NakupyTable :nakupy="nakupy" @editNakup="editNakup" @deleteNakup="deleteNakup"  @selectNakup="selectNakup" />
@@ -49,6 +49,7 @@
         selectedNakup: null,
         sumaLastMonth: 0,
         sumaThisMonth: 0,
+        favoritAll: '',
       };
     },
     computed: {
@@ -189,12 +190,63 @@
         this.sumaThisMonth = sum;
         console.log("Suma za aktuálny mesiac je: " + this.sumaThisMonth);
       },
+      updateFavoritAll() {
+        const itemCounts = {};
+        let maxCount = 0;
+        let pocetPoloziek = 0;
+        let favoriteItem = '';
+        let mostFrequentItem = '';
+
+        for (let polozka of this.polozky) {
+          const nazov = polozka.nazov;
+          if (itemCounts[nazov]) {
+            itemCounts[nazov]++;
+          } else {
+            itemCounts[nazov] = 1;
+          }
+
+          if (itemCounts[nazov] > maxCount) {
+            maxCount = itemCounts[nazov];
+            mostFrequentItem = nazov;
+          }
+        }
+
+        //console.log(this.polozky);
+        for (let polozka of this.polozky){
+          pocetPoloziek++;
+        }
+
+        // Count occurrences of each item in nakupy
+        // for (let nakup of this.nakupy) {
+        //   for (let polozka of this.polozky) {
+        //     pocetPoloziek++;
+        //     if (polozka.idNakupu === nakup.id) {
+        //       console.log("Tu som");
+        //       if (itemCounts[polozka.nazov]) {
+        //         itemCounts[polozka.nazov]++;
+        //       } else {
+        //         itemCounts[polozka.nazov] = 1;
+        //       }
+
+        //       // Update the favorite item if a new maximum count is found
+        //       if (itemCounts[polozka.nazov] > maxCount) {
+        //         maxCount = itemCounts[polozka.nazov];
+        //         favoriteItem = polozka.nazov;
+        //       }
+        //     }
+        //   }
+        // }
+
+        console.log(`Najobľúbenejšia položka je ${mostFrequentItem} (${maxCount}x)`);
+        this.favoritAll = `Najobľúbenejšia položka je ${mostFrequentItem} (${maxCount}x)`;
+      }
     },
     watch: {
       nakupy: {
         handler: function(newNakupy, oldNakupy) {
           this.updateSumaLastMonth();
           this.updateSumaThisMonth();
+          this.updateFavoritAll();
         },
         deep: true,
       },
@@ -214,6 +266,7 @@
     //Update sum for last month
     this.updateSumaLastMonth();
     this.updateSumaThisMonth();
+    this.updateFavoritAll();
     }
   };
   </script>

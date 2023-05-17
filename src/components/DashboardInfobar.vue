@@ -25,19 +25,24 @@
         type: Number,
         required: true,
       },
+      favoritAll: {
+        type: String,
+        required: true,
+      }
     },
     data() {
       return {
         boxes: [
-          { id: 1, title: 'Posledných 30 dní: ', content: '' },
-          { id: 2, title: 'Aktuálny mesiac', content: '' },
-          { id: 3, title: 'Box 3', content: 'Obsah boxu 3' },
-          { id: 4, title: 'Box 4', content: 'Obsah boxu 4' },
+          { id: 1, title: '', content: '' },
+          { id: 2, title: '', content: '' },
+          { id: 3, title: '', content: '' },
+          { id: 4, title: '', content: '' },
         ],
       };
     },
     mounted() {
       this.updateBoxContents();
+      this.handleCheckboxChanged();
     },
     watch: {
       sumaLastMonth() {
@@ -52,13 +57,38 @@
         return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
       },
       updateBoxContents() {
-        this.boxes[0].content = `Suma za posledný mesiac: ${this.formatCurrency(this.sumaLastMonth)}`;
-        this.boxes[1].content = `Suma za aktuálny mesiac: ${this.formatCurrency(this.sumaThisMonth)}`;
+        const lastMonthCheckbox = this.$refs.settingsInfobar.getCheckboxValue(1);
+        const thisMonthCheckbox = this.$refs.settingsInfobar.getCheckboxValue(2);
+        const favoritAllCheckbox = this.$refs.settingsInfobar.getCheckboxValue(3);
+  
+        this.boxes[0].title = lastMonthCheckbox ? 'Posledný mesiac' : '';
+        this.boxes[0].content = lastMonthCheckbox ? `Suma za posledný mesiac: ${this.formatCurrency(this.sumaLastMonth)}` : '';
+  
+        this.boxes[1].title = thisMonthCheckbox ? 'Aktuálny mesiac' : '';
+        this.boxes[1].content = thisMonthCheckbox ? `Suma za aktuálny mesiac: ${this.formatCurrency(this.sumaThisMonth)}` : '';
+
+        this.boxes[2].title = favoritAllCheckbox ? 'Tvoj favorit' : '';
+        this.boxes[2].content = favoritAllCheckbox ? `${(this.favoritAll)}` : '';
       },
       handleCheckboxChanged(checkboxName) {
+        console.log('Zmena checkboxu:', checkboxName);
+  
         if (checkboxName === 'lastMonth') {
           const checkbox = this.$refs.settingsInfobar.getCheckboxValue(1);
-          this.boxes[0].content = checkbox && checkbox.checked ? `Suma za posledný mesiac: ${this.formatCurrency(this.sumaLastMonth)}` : '';
+          console.log(checkbox);
+          this.updateBoxContents();
+        }
+  
+        if (checkboxName === 'thisMonth') {
+          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(2);
+          console.log(checkbox);
+          this.updateBoxContents();
+        }
+
+        if (checkboxName === 'favoritAll') {
+          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(3);
+          console.log(checkbox);
+          this.updateBoxContents();
         }
       },
     },
@@ -70,3 +100,4 @@
     display: flex;
   }
   </style>
+  

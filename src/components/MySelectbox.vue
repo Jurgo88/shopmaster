@@ -33,6 +33,7 @@ export default {
     };
   },
   mounted() {
+    //Select value from DB if item is edited
     this.selectedValue = this.modelValue ? this.options.find(option => option.value === this.modelValue)?.value : '';
   },
   methods: {
