@@ -17,6 +17,10 @@
       SettingsInfobar,
     },
     props: {
+        nakupy: {
+        type: Array,
+        required: true
+      },
       sumaLastMonth: {
         type: Number,
         required: true,
@@ -28,7 +32,8 @@
       favoritAll: {
         type: String,
         required: true,
-      }
+      },
+
     },
     data() {
       return {

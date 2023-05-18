@@ -1,13 +1,30 @@
 <template>
     <div>
-      <DashboardInfobar :sumaLastMonth="sumaLastMonth" :sumaThisMonth="sumaThisMonth" :favoritAll="favoritAll" />
+      <DashboardInfobar :sumaLastMonth="sumaLastMonth" :sumaThisMonth="sumaThisMonth" :favoritAll="favoritAll" :nakupy="nakupy" />
       <!-- <SettingsInfobar /> -->
-      <button @click="showAddNakupModal">Pridať nákup</button>
-      <NakupyTable :nakupy="nakupy" @editNakup="editNakup" @deleteNakup="deleteNakup"  @selectNakup="selectNakup" />
+
+
+      <div class="three-column">
+        <div class="column">
+          <button @click="showAddNakupModal">Pridať nákup</button>
+          <NakupyTable :nakupy="nakupy" @editNakup="editNakup" @deleteNakup="deleteNakup"  @selectNakup="selectNakup" />
+        </div>
+        <div class="column">
+          <button v-if="showAddPolozkaButton" @click="showAddPolozkaModal">Pridať položku</button>
+          <button @click="showAllPurchases">Zobraziť všetky položky</button>
+          <PolozkyTable v-if="showPolozky" :polozky="filteredNakupy" @editPolozka="editPolozka" @deletePolozka="deletePolozka" />
+        </div>
+        <div class="column">
+          <!-- <canvas id="myChart"></canvas> -->
+          <DashboardChart  :data="this.filteredNakupy"/>
+        </div>
+      </div>
+
+      
+      
       
       <NakupModal v-if="showNakupModal" @close="closeNakupModal" :editNakupData="editNakupData" @submitNakup="submitNakup" />
-      <button v-if="showAddPolozkaButton" @click="showAddPolozkaModal">Pridať položku</button>
-      <PolozkyTable v-if="showPolozky" :polozky="filteredNakupy" @editPolozka="editPolozka" @deletePolozka="deletePolozka" />
+      
       
       <PolozkaModal v-if="showPolozkaModal" @close="closePolozkaModal" :editPolozkaData="editPolozkaData" @submitPolozka="submitPolozka" />
     </div>
@@ -20,6 +37,7 @@
   import PolozkyTable from './PolozkyTable.vue';
   import PolozkaModal from './PolozkaModal.vue';
   import DashboardInfobar from './DashboardInfobar.vue';
+  import DashboardChart from './DashboardChart.vue';
 
   const getMaxIdByItem = async (collection, item) => {
   const snapshot = await db.collection(collection).orderBy(item, 'desc').limit(1).get();
@@ -34,6 +52,7 @@
       PolozkyTable,
       PolozkaModal,
       DashboardInfobar,
+      DashboardChart,
     },
     data() {
       return {
@@ -107,6 +126,8 @@
         this.filterIdNakupu = this.selectedNakup.idNakupu;
         this.showPolozky = true;
         this.showAddPolozkaButton = true;
+        // console.log("Selected nakup: "+ this.polozky);
+        // this.dataChart = this.selectedNakup;
     },
     async deleteNakup(id) {
       try {
@@ -143,6 +164,7 @@
                     idNakupu: this.filterIdNakupu,
                     datum: datum,
                      ...polozkaData });
+                     this.updateFavoritAll();
                 }
                 this.showPolozkaModal = false;
                 this.editPolozkaData = {};
@@ -163,7 +185,6 @@
       },
       updateSumaLastMonth() {
         // Príslušný kód pre výpočet sumy za posledný mesiac
-        // Napríklad:
         const lastMonth = new Date();
         lastMonth.setMonth(lastMonth.getMonth() - 1);
         const sum = this.nakupy.reduce((total, nakup) => {
@@ -191,55 +212,35 @@
         console.log("Suma za aktuálny mesiac je: " + this.sumaThisMonth);
       },
       updateFavoritAll() {
-        const itemCounts = {};
-        let maxCount = 0;
-        let pocetPoloziek = 0;
-        let favoriteItem = '';
-        let mostFrequentItem = '';
+      const itemCounts = {};
+      let maxCount = 0;
+      let favoriteItem = '';
 
-        for (let polozka of this.polozky) {
-          const nazov = polozka.nazov;
-          if (itemCounts[nazov]) {
-            itemCounts[nazov]++;
-          } else {
-            itemCounts[nazov] = 1;
-          }
-
-          if (itemCounts[nazov] > maxCount) {
-            maxCount = itemCounts[nazov];
-            mostFrequentItem = nazov;
-          }
+      for (let polozka of this.polozky) {
+        const nazov = polozka.nazov;
+        if (itemCounts[nazov]) {
+          itemCounts[nazov]++;
+        } else {
+          itemCounts[nazov] = 1;
         }
 
-        //console.log(this.polozky);
-        for (let polozka of this.polozky){
-          pocetPoloziek++;
+        if (itemCounts[nazov] > maxCount) {
+          maxCount = itemCounts[nazov];
+          favoriteItem = nazov;
         }
-
-        // Count occurrences of each item in nakupy
-        // for (let nakup of this.nakupy) {
-        //   for (let polozka of this.polozky) {
-        //     pocetPoloziek++;
-        //     if (polozka.idNakupu === nakup.id) {
-        //       console.log("Tu som");
-        //       if (itemCounts[polozka.nazov]) {
-        //         itemCounts[polozka.nazov]++;
-        //       } else {
-        //         itemCounts[polozka.nazov] = 1;
-        //       }
-
-        //       // Update the favorite item if a new maximum count is found
-        //       if (itemCounts[polozka.nazov] > maxCount) {
-        //         maxCount = itemCounts[polozka.nazov];
-        //         favoriteItem = polozka.nazov;
-        //       }
-        //     }
-        //   }
-        // }
-
-        console.log(`Najobľúbenejšia položka je ${mostFrequentItem} (${maxCount}x)`);
-        this.favoritAll = `Najobľúbenejšia položka je ${mostFrequentItem} (${maxCount}x)`;
       }
+
+       
+
+        console.log(`Najobľúbenejšia položka je ${favoriteItem} (${maxCount}x)`);
+        this.favoritAll = `Najobľúbenejšia položka je ${favoriteItem} (${maxCount}x)`;
+      },
+      showAllPurchases() {
+        // Logic to display all purchases
+        this.filterIdNakupu = null;
+        this.showPolozky = true;
+        this.showAddPolozkaButton = false;
+      },          
     },
     watch: {
       nakupy: {
@@ -257,6 +258,7 @@
       // Fetch items collection and set up real-time listeners
     db.collection('polozky').onSnapshot((snapshot) => {
       this.polozky = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      this.dataChart = this.polozky;
     });
 
     // Fetch shopping list collection and set up real-time listeners
@@ -270,3 +272,18 @@
     }
   };
   </script>
+  <style>
+.three-column {
+  display: flex;
+}
+
+.column {
+  flex: 3;
+  padding: 5px;
+}
+
+.column:first-child,
+.column:last-child {
+  flex: 2;
+}
+</style>
