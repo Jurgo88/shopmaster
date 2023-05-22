@@ -1,29 +1,50 @@
 <template>
-    <div class="modal">
-      <div class="modal-content">
+  <div class="modal">
+    <div class="modal-content">
       <span class="close" @click="$emit('close')">&times;</span>
       <h2 v-if="!editMode">Pridať novú položku</h2>
       <h2 v-if="editMode">Upraviť položku</h2>      
       <form @submit.prevent="submitPolozka">
         <div>
-          <label for="nazov">Názov:</label>
-          <input type="text" id="nazov" v-model="editPolozkaData.nazov" required>
+          <v-text-field
+            label="Názov"
+            v-model="editPolozkaData.nazov"
+            required
+          ></v-text-field>
         </div>
         <div>
-          <label for="cena">Cena:</label>
-          <input type="number" step="0.01" id="cena" v-model.number="editPolozkaData.cena" required>
+          <v-text-field
+            label="Cena"
+            type="number"
+            step="0.01"
+            v-model.number="editPolozkaData.cena"
+            required
+          ></v-text-field>
         </div>
-        
-        <SelectBox id="selectboxKategoria" v-model="selectedCategory"  :name="'selectboxKategoria'" :label="'Kategoria: '" :modelValue="selectedCategory.value" :options="categoryOptions" />
-        
+        <SelectBox
+          id="selectboxKategoria"
+          v-model="selectedCategory"
+          :name="'selectboxKategoria'"
+          :label="'Kategoria: '"
+          :modelValue="selectedCategory.value"
+          :options="categoryOptions"
+          :class="custom-selectbox"
+        ></SelectBox>
+        <!-- <v-select
+          v-model="selectedCategory"
+          :items="categoryOptions.value"
+          label="Kategoria:"
+        ></v-select> -->
+
         <div>
-          <button type="submit">{{ editMode ? 'Uložiť zmeny' : 'Pridať položku' }}</button>
-          <button type="button" @click="closePolozkaModal">Zrušiť</button>
+          <v-btn @click="$emit('submitPolozka')">{{ editMode ? 'Uložiť zmeny' : 'Pridať položku' }}</v-btn>
+          <v-btn @click="closePolozkaModal">Zrušiť</v-btn>
+
         </div>
       </form>
     </div>
-    </div>
-  </template>
+  </div>
+</template>
   <style scoped>
   .modal {
     display: block;
@@ -64,6 +85,7 @@
  import { ref, watch, computed } from 'vue';
  import SelectBox from './MySelectbox.vue';
  import { options } from '../categoryOptions.js';
+ import { VTextField, VBtn, VSelect,  } from 'vuetify/lib/components';
  
  // Exporting component
  export default {
@@ -81,6 +103,9 @@
    // Registering component dependencies
    components: {
      SelectBox,
+     VTextField,
+     VBtn,
+     VSelect,
    },
    // Defining component logic with setup function
    setup(props, { emit }) {

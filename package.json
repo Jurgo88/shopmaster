@@ -16,7 +16,8 @@
     "firebase-auth-lite": "^0.8.9",
     "firebase-firestore-lite": "^1.0.3",
     "vue": "^3.2.13",
-    "vue-router": "^4.0.3"
+    "vue-router": "^4.0.3",
+    "vuetify": "^3.2.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.0",
