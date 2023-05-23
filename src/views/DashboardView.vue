@@ -1,16 +1,16 @@
 <template>
     <div>
       <h1>Dashboard</h1>
-      <nakupy-dashboard />
+      <dashboard />
     </div>
   </template>
   
   <script>
-  import NakupyDashboard from '@/components/NakupyDashboard.vue'
+  import Dashboard from '@/components/Dashboard.vue'
   
   export default {
     components: {
-        NakupyDashboard
+        Dashboard
     }
   }
   </script>

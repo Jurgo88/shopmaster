@@ -16,57 +16,68 @@
 </template>
 
 <script>
+import { ref, reactive, onMounted } from 'vue';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 export default {
-  data() {
-    return {
-      expanded: false,
-      checkboxes: [
-        { id: 1, label: 'Posledných 30 dní', name: 'lastMonth', checked: false },
-        { id: 2, label: 'Aktuálny mesiac', name: 'thisMonth', checked: false },
-        { id: 3, label: 'Obľúbená položka', name: 'favoritAll', checked: false },
-        { id: 4, label: 'Checkbox 4', name: '4', checked: false },
-        { id: 5, label: 'Checkbox 5', name: '5', checked: false },
-        { id: 6, label: 'Checkbox 6', name: '6', checked: false },
-      ],
+  setup(_, { emit }) {
+    const expanded = ref(false);
+    const checkboxes = reactive([
+      { id: 1, label: 'Posledných 30 dní', name: 'lastMonth', checked: false },
+      { id: 2, label: 'Aktuálny mesiac', name: 'thisMonth', checked: false },
+      { id: 3, label: 'Obľúbená položka', name: 'favoritAll', checked: false },
+      { id: 4, label: 'Checkbox 4', name: '4', checked: false },
+      { id: 5, label: 'Checkbox 5', name: '5', checked: false },
+      { id: 6, label: 'Checkbox 6', name: '6', checked: false },
+    ]);
+
+    const toggleExpanded = () => {
+      expanded.value = !expanded.value;
     };
-  },
-  created() {
-    this.loadFromLocalStorage();
-  },
-  methods: {
-    toggleExpanded() {
-      this.expanded = !this.expanded;
-    },
-    checkboxChanged(checkbox) {
+
+    const checkboxChanged = (checkbox) => {
       console.log('Checked ID:', checkbox.label);
-      this.saveToLocalStorage();
-      this.$emit('checkbox-changed', checkbox.name);
-    },
-    getCheckboxValue(id) {
-      const checkbox = this.checkboxes.find(item => item.id === id);
+      saveToLocalStorage();
+      emit('checkbox-changed', checkbox.name);
+    };
+
+    const getCheckboxValue = (id) => {
+      const checkbox = checkboxes.find(item => item.id === id);
       return checkbox ? checkbox.checked : false;
-    },
-    loadFromLocalStorage() {
+    };
+
+    const loadFromLocalStorage = () => {
       const savedSettings = localStorage.getItem('settings');
       if (savedSettings) {
         const settings = JSON.parse(savedSettings);
-        this.checkboxes.forEach(checkbox => {
+        checkboxes.forEach(checkbox => {
           checkbox.checked = settings.includes(checkbox.name);
         });
       }
-    },
-    saveToLocalStorage() {
-        console.log('Ukladám do localStorage');
-        const settings = [];
-        this.checkboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-            settings.push(checkbox.name);
-            }
-        });
-        localStorage.setItem('settings', JSON.stringify(settings));
-    },
+    };
+
+    const saveToLocalStorage = () => {
+      console.log('Ukladám do localStorage');
+      const settings = [];
+      checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          settings.push(checkbox.name);
+        }
+      });
+      localStorage.setItem('settings', JSON.stringify(settings));
+    };
+
+    onMounted(() => {
+      loadFromLocalStorage();
+    });
+
+    return {
+      expanded,
+      checkboxes,
+      toggleExpanded,
+      checkboxChanged,
+      getCheckboxValue,
+    };
   },
 };
 </script>
