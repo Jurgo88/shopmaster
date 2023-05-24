@@ -1,10 +1,9 @@
 <template>
   <div>
     <div class="gear-icon" @click="toggleExpanded">
-      <!-- Vložte ikonu ozubeného kolesa -->
       <i class="fa fa-cog"></i>
     </div>
-    <div class="expanded-content" :class="{ show: expanded }">
+    <div class="expanded-content" :class="{ show: isExpanded }">
       <div class="checkbox-row">
         <label v-for="checkbox in checkboxes" :key="checkbox.id">
           <input type="checkbox" v-model="checkbox.checked" @change="checkboxChanged(checkbox)" />
@@ -14,14 +13,14 @@
     </div>
   </div>
 </template>
-
+ 
 <script>
 import { ref, reactive, onMounted } from 'vue';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 export default {
   setup(_, { emit }) {
-    const expanded = ref(false);
+    const isExpanded = ref();
     const checkboxes = reactive([
       { id: 1, label: 'Posledných 30 dní', name: 'lastMonth', checked: false },
       { id: 2, label: 'Aktuálny mesiac', name: 'thisMonth', checked: false },
@@ -32,7 +31,7 @@ export default {
     ]);
 
     const toggleExpanded = () => {
-      expanded.value = !expanded.value;
+      isExpanded.value = !isExpanded.value;
     };
 
     const checkboxChanged = (checkbox) => {
@@ -72,7 +71,7 @@ export default {
     });
 
     return {
-      expanded,
+      isExpanded,
       checkboxes,
       toggleExpanded,
       checkboxChanged,

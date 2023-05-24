@@ -10,12 +10,12 @@
         </div>
         <div class="form-group">
           <label for="suma">Suma:</label>
-          <v-text-field v-model="editNakupData.suma" id="suma" type="number" step="0.01" outlined required></v-text-field>
+          <v-text-field v-model.number="editNakupData.suma" id="suma" type="number" step="0.01" outlined required></v-text-field>
         </div>
         <div class="form-group">
           <label for="datum">Dátum:</label>
           <input type="date" id="datum" v-model="editNakupData.datum" required>
-          <v-date-picker v-model="picker"></v-date-picker>
+          <v-date-picker v-model.date="picker"></v-date-picker>
         </div>
         <v-btn type="submit" color="secondary">{{ editNakupData.id ? 'Uložiť' : 'Pridať' }}</v-btn>
       </form>
