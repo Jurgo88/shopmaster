@@ -116,6 +116,7 @@ export default {
       }
     },
     editNakup(nakup) {
+      console.log("Edit nakup");
       this.editNakupData = { ...nakup };
       this.showNakupModal = true;
       this.updateSumaLastMonth();
@@ -184,12 +185,14 @@ export default {
       }
     },
     updateSumaLastMonth() {
+      console.log('pod sem');
       // Príslušný kód pre výpočet sumy za posledný mesiac
       const lastMonth = new Date();
       lastMonth.setMonth(lastMonth.getMonth() - 1);
       const sum = this.nakupy.reduce((total, nakup) => {
         const nakupDate = new Date(nakup.datum);
         if (nakupDate > lastMonth) {
+          console.log("totoal : " + total + " + suma : " + nakup.suma)
           return total + nakup.suma;
         }
         return total;

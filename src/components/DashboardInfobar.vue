@@ -8,8 +8,11 @@
   </template>
   
   <script>
+  import { ref, onMounted } from 'vue';
   import DashboardInfobarItem from './DashboardInfobarItem.vue';
   import SettingsInfobar from './SettingsInfobar.vue';
+
+  
   
   export default {
     components: {
@@ -35,17 +38,81 @@
       },
 
     },
-    data() {
-      return {
-        boxes: [
-          { id: 1, title: '', content: '' },
-          { id: 2, title: '', content: '' },
-          { id: 3, title: '', content: '' },
-          { id: 4, title: '', content: '' },
-        ],
+    setup(_, { refs }){
+      const boxes = ref([]);
+      const settingsInfobar= ref(null);
+
+      const formatCurrency = (value) => {
+        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
       };
+      
+      // const handleCheckboxChanged = (checkboxName) => {
+      //   console.log('Zmena checkboxu:', checkboxName);
+
+      //   const checkboxValue = refs.settingsInfobar.getCheckboxValue(Number(checkboxName));
+      //   console.log(checkboxValue);
+      //   updateBoxContents();
+      // };
+      const handleCheckboxChanged = (checkboxName) => {
+        console.log('Zmena checkboxu composition:', checkboxName);
+        if (checkboxName === 'lastMonth') {
+          const checkbox = settingsInfobar.value.getCheckboxValue(1);
+          console.log(checkbox);
+          updateBoxContents();
+        }
+  
+        if (checkboxName === 'thisMonth') {
+          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(2);
+          console.log(checkbox);
+          this.updateBoxContents();
+        }
+
+        if (checkboxName === 'favoritAll') {
+          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(3);
+          console.log(checkbox);
+          this.updateBoxContents();
+        }
+        if (checkboxName === '4') {
+          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(4);
+          console.log(checkbox);
+          this.updateBoxContents();
+        }
+        if (checkboxName === '5') {
+          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(5);
+          console.log(checkbox);
+          this.updateBoxContents();
+        }
+        if (checkboxName === '6') {
+          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(6);
+          console.log(checkbox);
+          this.updateBoxContents();
+        }
+        //return checkboxName;
+      };
+
+      const updateBoxContents = () => {
+        console.log('update');
+        //TODO dokoncit update 
+      }
+      
+      return{
+        boxes,
+        formatCurrency,
+        handleCheckboxChanged,
+        settingsInfobar,
+      }
     },
+    // data() {
+    //   return {
+    //     boxes: [],
+    //   };
+    // },
+
+    // onMounted(() => {
+    //   const settingsInfobar = settingsInfobarRef.value;
+    // }),
     mounted() {
+      // const settingsInfobar = settingsInfobarRef.value;
       this.updateBoxContents();
       this.handleCheckboxChanged();
     },
@@ -58,9 +125,9 @@
       },
     },
     methods: {
-      formatCurrency(value) {
-        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
-      },
+      // formatCurrency(value) {
+      //   return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
+      // },
       updateBoxContents() {
         const checkboxValues = {
           1: this.$refs.settingsInfobar.getCheckboxValue(1),
@@ -120,42 +187,42 @@
         });
       },
 
-      handleCheckboxChanged(checkboxName) {
-        console.log('Zmena checkboxu:', checkboxName);
+      // handleCheckboxChanged(checkboxName) {
+      //   console.log('Zmena checkboxu:', checkboxName);
   
-        if (checkboxName === 'lastMonth') {
-          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(1);
-          console.log(checkbox);
-          this.updateBoxContents();
-        }
+      //   if (checkboxName === 'lastMonth') {
+      //     const checkbox = this.$refs.settingsInfobar.getCheckboxValue(1);
+      //     console.log(checkbox);
+      //     this.updateBoxContents();
+      //   }
   
-        if (checkboxName === 'thisMonth') {
-          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(2);
-          console.log(checkbox);
-          this.updateBoxContents();
-        }
+      //   if (checkboxName === 'thisMonth') {
+      //     const checkbox = this.$refs.settingsInfobar.getCheckboxValue(2);
+      //     console.log(checkbox);
+      //     this.updateBoxContents();
+      //   }
 
-        if (checkboxName === 'favoritAll') {
-          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(3);
-          console.log(checkbox);
-          this.updateBoxContents();
-        }
-        if (checkboxName === '4') {
-          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(4);
-          console.log(checkbox);
-          this.updateBoxContents();
-        }
-        if (checkboxName === '5') {
-          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(5);
-          console.log(checkbox);
-          this.updateBoxContents();
-        }
-        if (checkboxName === '6') {
-          const checkbox = this.$refs.settingsInfobar.getCheckboxValue(6);
-          console.log(checkbox);
-          this.updateBoxContents();
-        }
-      },
+      //   if (checkboxName === 'favoritAll') {
+      //     const checkbox = this.$refs.settingsInfobar.getCheckboxValue(3);
+      //     console.log(checkbox);
+      //     this.updateBoxContents();
+      //   }
+      //   if (checkboxName === '4') {
+      //     const checkbox = this.$refs.settingsInfobar.getCheckboxValue(4);
+      //     console.log(checkbox);
+      //     this.updateBoxContents();
+      //   }
+      //   if (checkboxName === '5') {
+      //     const checkbox = this.$refs.settingsInfobar.getCheckboxValue(5);
+      //     console.log(checkbox);
+      //     this.updateBoxContents();
+      //   }
+      //   if (checkboxName === '6') {
+      //     const checkbox = this.$refs.settingsInfobar.getCheckboxValue(6);
+      //     console.log(checkbox);
+      //     this.updateBoxContents();
+      //   }
+      // },
     },
   };
   </script>
