@@ -13,4 +13,4 @@
         Dashboard
     }
   }
-  </script>
+  </script> 
