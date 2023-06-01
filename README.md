@@ -1,4 +1,4 @@
-New branch is created for Vuetify framework update and refactoring from Opitons API to Composition API
+1.0.2 Create users and login page. Needed for specific data for users. Also added Vuex + store and updated netlify for enviroment variables
 
 # shopmaster
 
