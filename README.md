@@ -1,3 +1,5 @@
+New branch is created for Vuetify framework update and refactoring from Opitons API to Composition API
+
 # shopmaster
 
 ## Project setup
