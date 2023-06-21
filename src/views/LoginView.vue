@@ -1,16 +1,16 @@
 <template>
     <div>
-      <h1>Dashboard</h1>
-      <dashboard />
+      <h1>Login</h1>
+      <Login />
     </div>
   </template>
   
   <script>
-  import Dashboard from '@/components/Dashboard.vue'
+  import Login from '@/components/Login.vue'
   
   export default {
     components: {
-        Dashboard
+        Login
     }
   }
   </script> 

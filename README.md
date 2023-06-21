@@ -1,3 +1,5 @@
+1.0.2 Create users and login page. Needed for specific data for users. Also added Vuex + store and updated netlify for enviroment variables
+
 # shopmaster
 
 ## Project setup
