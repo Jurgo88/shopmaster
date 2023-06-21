@@ -10,7 +10,7 @@ const store = createStore({
   mutations: {
     setCurrentUser(state, user) {
       state.currentUser = user;
-      localStorage.setItem('currentUser', JSON.stringify(user));
+    //   localStorage.setItem('currentUser', JSON.stringify(user));
     },
     setError(state, error) {
       state.error = error;
